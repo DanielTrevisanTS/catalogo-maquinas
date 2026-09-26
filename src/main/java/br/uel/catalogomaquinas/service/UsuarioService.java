@@ -23,7 +23,7 @@ public class UsuarioService {
         Usuario usuario = usuarioOpt.get();
 
         if (!usuario.getSenha().equals(senha)) {
-            throw new IllegalArgumentException("Senha incorreto.");
+            throw new IllegalArgumentException("Senha incorreta.");
         }
 
         return usuario;
