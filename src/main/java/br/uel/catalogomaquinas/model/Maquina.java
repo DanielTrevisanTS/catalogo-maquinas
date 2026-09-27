@@ -3,7 +3,6 @@ package br.uel.catalogomaquinas.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import org.springframework.web.service.annotation.GetExchange;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
