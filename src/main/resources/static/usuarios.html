@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de Usuários</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="/index.html">🚜 Catálogo de Máquinas</a>
+        <div>
+            <a href="/index.html" class="btn btn-outline-light me-2">Vitrine</a>
+            <a href="/cadastro-maquina.html" class="btn btn-success">+ Nova Máquina</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row g-4">
+        <!-- Cadastrar Usuário -->
+        <div class="col-md-5">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Novo Usuário</h5>
+                </div>
+                <div class="card-body">
+                    <form id="formUsuario">
+                        <div class="mb-3">
+                            <label class="form-label">E-mail</label>
+                            <input type="email" id="email" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Senha</label>
+                            <input type="password" id="senha" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Perfil</label>
+                            <select id="perfil" class="form-select" required>
+                                <option value="CLIENTE">CLIENTE</option>
+                                <option value="ADMIN">ADMIN</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Cadastrar Usuário</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Usuários -->
+        <div class="col-md-7">
+            <div class="card shadow">
+                <div class="card-header bg-dark text-white">
+                    <h5 class="mb-0">Usuários Cadastrados</h5>
+                </div>
+                <div class="card-body p-0">
+                    <table class="table table-striped mb-0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>E-mail</th>
+                            <th>Perfil</th>
+                            <th>Ações</th>
+                        </tr>
+                        </thead>
+                        <tbody id="tabelaUsuarios">
+                        <!-- Inseridos dinamicamente -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const API_USERS = '/api/usuarios';
+
+    async function carregarUsuarios() {
+        try {
+            const res = await fetch(API_USERS);
+            const usuarios = await res.json();
+            const tbody = document.getElementById('tabelaUsuarios');
+            tbody.innerHTML = '';
+
+            usuarios.forEach(u => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${u.id}</td>
+                        <td>${u.email}</td>
+                        <td><span class="badge ${u.perfil === 'ADMIN' ? 'bg-danger' : 'bg-secondary'}">${u.perfil}</span></td>
+                        <td>
+                            <button onclick="deletarUsuario(${u.id})" class="btn btn-sm btn-outline-danger">Deletar</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        } catch (err) {
+            console.error("Erro ao carregar usuários:", err);
+        }
+    }
+
+    document.getElementById('formUsuario').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const usuario = {
+            email: document.getElementById('email').value,
+            senha: document.getElementById('senha').value,
+            perfil: document.getElementById('perfil').value
+        };
+
+        const res = await fetch(API_USERS, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(usuario)
+        });
+
+        if (res.ok) {
+            alert('Usuário cadastrado!');
+            document.getElementById('formUsuario').reset();
+            carregarUsuarios();
+        } else {
+            const msg = await res.text();
+            alert(msg || 'Erro ao cadastrar usuário.');
+        }
+    });
+
+    async function deletarUsuario(id) {
+        if (confirm('Deseja excluir este usuário?')) {
+            await fetch(`${API_USERS}/${id}`, { method: 'DELETE' });
+            carregarUsuarios();
+        }
+    }
+
+    carregarUsuarios();
+</script>
+</body>
+</html>

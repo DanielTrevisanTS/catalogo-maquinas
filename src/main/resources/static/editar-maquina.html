@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Máquina</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container my-5" style="max-width: 600px;">
+    <div class="card shadow">
+        <div class="card-header bg-dark text-white">
+            <h4 class="mb-0">Editar Máquina</h4>
+        </div>
+        <div class="card-body">
+            <form id="formEditar">
+                <input type="hidden" id="id">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Marca</label>
+                        <input type="text" id="marca" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Modelo</label>
+                        <input type="text" id="modelo" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Categoria</label>
+                    <select id="categoria" class="form-select" required></select>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Ano</label>
+                        <input type="number" id="ano" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Preço (R$)</label>
+                        <input type="number" step="0.01" id="preco" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Estoque</label>
+                        <input type="number" id="estoque" class="form-control" required>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Promoção (%)</label>
+                        <input type="number" id="promocao" class="form-control" min="0" max="100">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">URL da Imagem</label>
+                    <input type="url" id="imagemUrl" class="form-control">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Descrição</label>
+                    <textarea id="descricao" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="/index.html" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-warning">Atualizar Máquina</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const maquinaId = urlParams.get('id');
+
+    async function inicializar() {
+        // Carregar categorias
+        const resCat = await fetch('/api/maquinas/categorias');
+        const cats = await resCat.json();
+        const selectCat = document.getElementById('categoria');
+        cats.forEach(c => selectCat.innerHTML += `<option value="${c}">${c}</option>`);
+
+        // Carregar dados da máquina
+        if (maquinaId) {
+            const resM = await fetch(`/api/maquinas/${maquinaId}`);
+            const m = await resM.json();
+
+            document.getElementById('id').value = m.id;
+            document.getElementById('marca').value = m.marca;
+            document.getElementById('modelo').value = m.modelo;
+            document.getElementById('categoria').value = m.categoria;
+            document.getElementById('ano').value = m.ano;
+            document.getElementById('preco').value = m.preco;
+            document.getElementById('estoque').value = m.estoque;
+            document.getElementById('promocao').value = m.promocao || 0;
+            document.getElementById('imagemUrl').value = m.imagemUrl || '';
+            document.getElementById('descricao').value = m.descricao || '';
+        }
+    }
+
+    document.getElementById('formEditar').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const maquina = {
+            id: parseInt(document.getElementById('id').value),
+            marca: document.getElementById('marca').value,
+            modelo: document.getElementById('modelo').value,
+            categoria: document.getElementById('categoria').value,
+            ano: parseInt(document.getElementById('ano').value),
+            preco: parseFloat(document.getElementById('preco').value),
+            estoque: parseInt(document.getElementById('estoque').value),
+            promocao: parseInt(document.getElementById('promocao').value),
+            imagemUrl: document.getElementById('imagemUrl').value,
+            descricao: document.getElementById('descricao').value
+        };
+
+        const res = await fetch(`/api/maquinas/${maquinaId}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(maquina)
+        });
+
+        if (res.ok) {
+            alert('Máquina atualizada!');
+            window.location.href = '/index.html';
+        } else {
+            alert('Erro ao atualizar máquina.');
+        }
+    });
+
+    inicializar();
+</script>
+</body>
+</html>
