@@ -19,7 +19,7 @@ public class ClienteCatalogoController {
         this.maquinaService = maquinaService;
     }
 
-    @GetMapping({"/", "/catalgo"})
+    @GetMapping({"/", "/catalogo"})
     public String exibirCatalogo(@RequestParam(value = "modelo", required = false) String modelo,
                                  @RequestParam(value = "categoria", required = false) Categoria categoria,
                                  @RequestParam(value = "apenasPromocao", required = false) Boolean apenasPromocao,

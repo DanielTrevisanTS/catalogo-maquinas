@@ -27,7 +27,7 @@ public class AuthController {
         return "login";
     }
 
-    @PutMapping("/fazer-login")
+    @PostMapping("/fazer-login")
     public String fazerLogin(@RequestParam("email") String email, @RequestParam("senha") String senha, HttpSession session, RedirectAttributes redirectAttributes) {
         try {
             Usuario usuario = usuarioService.autenticar(email, senha);

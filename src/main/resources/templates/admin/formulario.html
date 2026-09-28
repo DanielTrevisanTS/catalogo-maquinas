@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${maquina.id == null ? 'Nova Máquina' : 'Editar Máquina'}">Formulário de Máquina</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand fw-bold" th:href="@{/admin/maquinas}">⚙️ Painel Admin</a>
+    </div>
+</nav>
+
+<div class="container my-4" style="max-width: 700px;">
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-dark text-white p-3">
+            <h4 class="mb-0 fs-5" th:text="${maquina.id == null ? 'Cadastro de Nova Máquina' : 'Editar Máquina #' + maquina.id}">Formulário</h4>
+        </div>
+        <div class="card-body p-4">
+
+            <form th:action="@{/admin/maquinas/salvar}" th:object="${maquina}" method="post">
+                <input type="hidden" th:field="*{id}">
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="marca" class="form-label fw-bold">Marca *</label>
+                        <input type="text" th:field="*{marca}" class="form-control" id="marca"
+                               th:classappend="${#fields.hasErrors('marca')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{marca}">Erro na marca</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="modelo" class="form-label fw-bold">Modelo *</label>
+                        <input type="text" th:field="*{modelo}" class="form-control" id="modelo"
+                               th:classappend="${#fields.hasErrors('modelo')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{modelo}">Erro no modelo</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="categoria" class="form-label fw-bold">Categoria *</label>
+                        <select th:field="*{categoria}" class="form-select" id="categoria"
+                                th:classappend="${#fields.hasErrors('categoria')} ? 'is-invalid'">
+                            <option value="">Selecione uma categoria...</option>
+                            <option th:each="cat : ${categorias}" th:value="${cat}" th:text="${cat}"></option>
+                        </select>
+                        <div class="invalid-feedback" th:errors="*{categoria}">Erro na categoria</div>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="ano" class="form-label fw-bold">Ano de Fabricação *</label>
+                        <input type="number" th:field="*{ano}" class="form-control" id="ano"
+                               th:classappend="${#fields.hasErrors('ano')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{ano}">Erro no ano</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-3">
+                        <label for="preco" class="form-label fw-bold">Preço (R$) *</label>
+                        <input type="number" step="0.01" th:field="*{preco}" class="form-control" id="preco"
+                               th:classappend="${#fields.hasErrors('preco')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{preco}">Erro no preço</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="estoque" class="form-label fw-bold">Estoque *</label>
+                        <input type="number" th:field="*{estoque}" class="form-control" id="estoque"
+                               th:classappend="${#fields.hasErrors('estoque')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{estoque}">Erro no estoque</div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <label for="promocao" class="form-label fw-bold">Desconto Promoção (%)</label>
+                        <input type="number" th:field="*{promocao}" class="form-control" id="promocao"
+                               th:classappend="${#fields.hasErrors('promocao')} ? 'is-invalid'">
+                        <div class="invalid-feedback" th:errors="*{promocao}">Erro na promoção</div>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="imagemUrl" class="form-label fw-bold">URL da Imagem</label>
+                    <input type="url" th:field="*{imagemUrl}" class="form-control" id="imagemUrl" placeholder="https://exemplo.com/imagem.jpg">
+                </div>
+
+                <div class="mb-4">
+                    <label for="descricao" class="form-label fw-bold">Descrição</label>
+                    <textarea th:field="*{descricao}" class="form-control" id="descricao" rows="3" placeholder="Detalhes e ficha técnica da máquina..."></textarea>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a th:href="@{/admin/maquinas}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary fw-bold" th:text="${maquina.id == null ? 'Salvar Registro' : 'Atualizar Registro'}">Salvar</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
